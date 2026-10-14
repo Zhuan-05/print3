@@ -72,3 +72,7 @@ npm start
 - `docs/`、`deploy/`：运维参考和服务器服务配置。
 - `tests/`：自动化验证。
 - `dist/`：可分享的干净安装包，运行 `npm run build` 重新生成。
+
+## 许可证
+
+本项目采用 [MIT License](LICENSE)。

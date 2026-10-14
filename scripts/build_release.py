@@ -3,7 +3,7 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = ['package.json', 'package-lock.json', 'scripts/npm.mjs', 'tests/npm.test.mjs', 'README.md', 'docs/OPERATIONS.md',
+FILES = ['package.json', 'package-lock.json', 'scripts/npm.mjs', 'tests/npm.test.mjs', 'LICENSE', 'README.md', 'docs/OPERATIONS.md',
          '.env.example', '.gitignore', 'requirements.txt', 'requirements-test.txt',
          'pyproject.toml', 'manage.py', 'auto_setup.py', 'deploy_print3d.bat',
          'scripts/deploy.sh', 'scripts/deploy_windows.ps1',

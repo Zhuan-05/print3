@@ -4,7 +4,9 @@
   "private": true,
   "description": "npm deployment commands for the Print3D Telegram order service",
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "setup": "node scripts/npm.mjs install",
     "start": "node scripts/npm.mjs start",
@@ -14,5 +16,9 @@
     "test": "node --test tests/npm.test.mjs",
     "test:backend": "node scripts/npm.mjs test"
   },
-  "repository": { "type": "git", "url": "https://github.com/Zhuan-05/print3.git" }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zhuan-05/print3.git"
+  },
+  "license": "MIT"
 }
