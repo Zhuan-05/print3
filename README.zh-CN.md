@@ -6,7 +6,7 @@ Telegram 3D 打印接单系统，支持 npm 部署或 Windows 双击启动。Nod
 
 ## 小白完整教程
 
-第一次部署请按[小白部署教程](docs/TUTORIAL.zh-CN.md)从准备账号到测试首单逐步操作。
+第一次部署请按[简体中文小白教程](docs/TUTORIAL.zh-CN.md)逐步操作，也可阅读[English tutorial](docs/TUTORIAL.en.md)。
 
 ## 小白快速部署
 

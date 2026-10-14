@@ -6,7 +6,7 @@ A Telegram order and customer support system for 3D printing. Use npm to prepare
 
 ## Beginner setup
 
-For a detailed Chinese walkthrough from installation through the first test order, see the [beginner tutorial](docs/TUTORIAL.zh-CN.md).
+For step-by-step deployment guides, see the [English beginner tutorial](docs/TUTORIAL.en.md) or the [简体中文教程](docs/TUTORIAL.zh-CN.md).
 
 Follow these steps in order. Node.js manages deployment; the order backend and its dependencies are prepared automatically.
 
