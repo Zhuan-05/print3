@@ -1,10 +1,10 @@
 # Print3D
 
-Telegram 3D 打印接单系统，支持 npm 部署或 Windows 双击启动。Node.js 负责安装和启动，接单后端使用 Python；程序会自动准备 Python 虚拟环境和依赖。
+A Telegram order and customer support system for 3D printing. Use npm to prepare and run the deployment, or double-click the Windows launcher. Node.js manages deployment; the order processing backend runs on Python, which is installed automatically.
 
-## npm 部署
+## npm deployment
 
-需要 Node.js 22+ 和 npm。支持 Windows 10/11（使用 WSL2 Ubuntu）或 Ubuntu/Debian Linux。先从私有仓库克隆（需要 GitHub 访问权限）：
+Requirements: Node.js 22+ and npm. Supported platforms are Windows 10/11 with WSL2 Ubuntu, and Ubuntu/Debian Linux. Clone this private repository with an account that has access:
 
 ```bash
 git clone https://github.com/Zhuan-05/print3.git
@@ -13,66 +13,66 @@ npm install
 npm start
 ```
 
-`npm install` 准备 npm 项目；`npm start` 自动检查/安装系统依赖、安装 Python 依赖，然后启动配置向导及服务。Windows 可能请求管理员安装 WSL，Linux 首次安装可能要求 sudo 密码。Linux 建议使用普通用户运行；不支持仅提供 Node.js、不能安装 Python 或持久保存 SQLite 的托管环境。
+`npm install` prepares the npm project. `npm start` checks and installs system and Python dependencies, then opens the setup wizard and starts the service. Windows may request administrator permission to install WSL. On Linux, the first setup may ask for your sudo password. Run Linux deployments as a regular user. Hosting platforms that cannot install Python or provide persistent SQLite storage are not supported.
 
-| 命令 | 用途 |
+| Command | Purpose |
 |---|---|
-| `npm start` | 自动准备环境、首次配置并启动；已有配置直接复用 |
-| `npm run setup` | 只安装环境和依赖，不启动 Bot |
-| `npm run configure` | 重新配置，不启动服务 |
-| `npm run build` | 生成 `dist/print3d-autodeploy.zip` |
-| `npm test` | 验证 npm 启动入口 |
-| `npm run test:backend` | 安装测试依赖并验证接单后端，不发送真实消息 |
+| `npm start` | Prepare the environment, configure on first run, and start the service. Reuses existing configuration on later runs. |
+| `npm run setup` | Install the environment and dependencies without starting the bot. |
+| `npm run configure` | Reconfigure the service without starting it. |
+| `npm run build` | Create `dist/print3d-autodeploy.zip`. |
+| `npm test` | Check the npm deployment entry point. |
+| `npm run test:backend` | Install test dependencies and run backend tests. No real Telegram messages are sent. |
 
-也可以将整个分享包解压到固定目录，双击 `deploy_print3d.bat`。不要只复制 BAT。仓库设为私有 npm 项目，不发布到公共 npm registry。
+You can also extract the complete release archive into a permanent folder and double-click `deploy_print3d.bat`. Do not copy the BAT file by itself. The npm package is marked private and is not published to the public npm registry.
 
-## 使用者需要准备什么
+## What you need
 
-1. Windows 10/11 或 Ubuntu/Debian、安装权限和稳定网络（能访问 Telegram、Google、Python 软件源和 Cloudflare）。电脑运行期间不能休眠。
-2. 自己向 Telegram `@BotFather` 创建的专用机器人 Token，以及自己的 Telegram 账号。群接单时先建管理群并加入机器人。
-3. **已完成第一阶段接单脚本的 Google 表单**：包含 Telegram ID、绑定令牌、层高、填充率、材质、单个 STL 上传字段；原来的表单提交及失败重试触发器已安装并授权。这个第二阶段包不含第一阶段完整 Code.gs，不能把空白表单当成已接通的表单。
-4. 收款说明。可以先填“请联系管理员获取收款信息”。不需要 DeepSeek 或 OpenAI API Key。
+1. Windows 10/11 or Ubuntu/Debian, installation permissions, and a reliable internet connection to Telegram, Google, Python package sources, and Cloudflare. Keep the computer awake while the service runs.
+2. A dedicated bot created with Telegram `@BotFather`, its bot token, and your Telegram account. For group-based order management, create a group and add the bot first.
+3. An existing Google Form with the Stage 1 order-processing Apps Script and installed, authorized submission and retry triggers. The form must include Telegram ID, binding token, layer height, infill, material, and one STL file upload field. This repository contains the Stage 2 backend and does not include the complete Stage 1 `Code.gs`; an empty form alone will not process orders.
+4. Payment instructions for your customers. You can start with “Contact the administrator for payment details.” You do not need a DeepSeek or OpenAI API key.
 
-## 首次使用
+## First run
 
-- 自动检查 WSL Ubuntu。未安装时请求 Windows 管理员权限安装 Ubuntu 24.04。按 Windows 提示重启，首次打开 Ubuntu 创建 Linux 用户名/密码，再双击 BAT。系统安装和账号授权不能跳过。
-- 自动安装 Linux 依赖、创建 Python 环境、下载锁定依赖。首次安装可能需要输入 Linux 密码；输入时不显示字符。
-- 在窗口粘贴 Token（隐藏输入），选择群接单或私聊管理。
-- 按窗口显示的随机 `/setup` 命令私聊机器人；群模式再用同一账号在群里发送带 Bot 用户名的命令。管理员和群 ID 自动识别，无需查 ID 或编辑 `.env`。匿名管理员不能配对。
-- 粘贴表单编辑链接。Google 表单菜单选择“获取预填链接”：Telegram ID 填 `123456789`，绑定令牌填 `PRINT3D_BINDING_TOKEN`，其他字段按需填测试值，生成链接后粘贴到窗口。程序自动提取 Form ID、公开 URL 和两个 entry ID。
-- 输入收款说明，程序自动生成密钥、保存配置、启动后端和临时公网隧道。
-- 启动成功后会把配置脚本复制到 Windows 剪贴板。在**现有第一阶段 Apps Script** 新建脚本文件，粘贴并运行 `configurePrint3D`。脚本只设置 `WEBHOOK_URL` 和 `WEBHOOK_SECRET`，不替代业务代码、不安装触发器。若剪贴板不可用，窗口会显示私有文件路径。
-- 打开窗口显示的公网地址加 `/healthz`，确认 `{"ok":true}`。用客户账号 `/start` 获取新链接，提交一份真实测试表单，确认管理员收到新订单。
+- On Windows, the launcher checks for Ubuntu on WSL. If none is installed, it requests administrator permission to install Ubuntu 24.04. Restart Windows if prompted, open Ubuntu once to create a Linux username and password, then run the launcher again. System installation and account authorization require your input.
+- The launcher installs Linux dependencies, creates a Python environment, and downloads the pinned dependencies. The first Linux setup may ask for your sudo password; password characters are not displayed.
+- Paste your bot token into the setup prompt. The input is hidden. Choose group or private-chat administration.
+- Send the one-time `/setup` command shown in the terminal to your bot in a private chat. For group administration, send the displayed `/setup@YourBotUsername` command in the group using the same Telegram account. The setup reads your administrator and group IDs automatically. You do not need to look up IDs or edit `.env`. Anonymous group admins cannot pair.
+- Paste the Google Form edit link. In Google Forms, select **Get pre-filled link**. Enter `123456789` for the Telegram ID field and `PRINT3D_BINDING_TOKEN` for the binding-token field. Fill other required fields with sample values, generate the link, and paste it into the terminal. Setup extracts the Form ID, public URL, and field IDs.
+- Enter your payment instructions. Setup generates a secret, saves your configuration, and starts the backend and a temporary public tunnel.
+- After startup, the setup script is copied to the Windows clipboard. In the **existing Stage 1 Apps Script**, add a script file, paste the contents, and run `configurePrint3D`. This sets `WEBHOOK_URL` and `WEBHOOK_SECRET`; it does not replace the order-processing code or install triggers. If clipboard access is unavailable, the terminal shows the private file path.
+- Open the public URL shown in the terminal followed by `/healthz`; expect `{"ok":true}`. From a customer account, send `/start`, submit a test order, and confirm the administrator receives it.
 
-## 再次使用
+## Later runs and configuration
 
-运行 `npm start` 或双击同一个 `deploy_print3d.bat`，自动复用配置和数据库。保持窗口开启；Ctrl+C 停止服务。Quick Tunnel 地址可能每次变化，重新启动后要把新生成的配置脚本粘贴到 Google 并运行一次。
+Run `npm start` or double-click `deploy_print3d.bat` again. The launcher reuses your configuration and database. Keep the terminal open while the service runs; press Ctrl+C to stop it. Quick Tunnel URLs can change after a restart. When they do, paste the newly generated script into Google Apps Script and run it again.
 
-需要修改账号或表单配置时，运行 `npm run configure`；使用 BAT 时可运行 `deploy_print3d.bat reconfigure`。npm 配置完成后再运行 `npm start`。完整配置不会在日常启动时被覆盖；重新配置保留已有数据库路径和有效 Webhook Secret。修改 Bot 或管理员前请备份并确认业务归属。
+To change the bot, form, or other settings, run `npm run configure`. With the BAT launcher, use `deploy_print3d.bat reconfigure`. After npm configuration finishes, run `npm start`. Regular starts do not overwrite a complete configuration. Reconfiguration preserves the existing database path and valid webhook secret. Back up your data before changing the bot or administrator.
 
-## 长期接单部署
+## Production hosting
 
-当前自动入口适用于本机试用和演示。Quick Tunnel 为临时地址，不保证生产可用性；它不能实现无需更新 Google 配置的长期部署。长期运行准备 Ubuntu VPS、固定 HTTPS 域名及 Cloudflare 固定隧道，按 [运维说明](docs/OPERATIONS.md) 第 6、8 节安装服务。VPS、域名和账号授权仍需使用者提供。Windows 自动入口不会自动创建开机任务或云服务器。
+The automatic local deployment is intended for testing and demonstrations. Cloudflare Quick Tunnels use temporary URLs and do not guarantee production availability. For a stable deployment, provide an Ubuntu VPS, a fixed HTTPS domain, and a named Cloudflare Tunnel, then follow sections 6 and 8 in the [operations guide](docs/OPERATIONS.md). You must provide the VPS, domain, and account authorizations. The Windows launcher does not create a cloud server or an automatic startup task.
 
-## 分享与数据
+## Release and data
 
-分享 `dist/print3d-autodeploy.zip`，不要分享已经配置过的整个项目目录。包不含 `.env`、真实密钥、订单数据库、日志或私有 Google 配置。每个商家使用自己的机器人、表单和安装目录。
+Share `dist/print3d-autodeploy.zip` instead of a configured project folder. The archive excludes `.env`, credentials, order databases, logs, and private Google configuration. Each business should use its own bot, form, and installation folder.
 
-数据库默认在 Linux/WSL 的 `~/.local/share/print3d-data/<项目摘要>/`，与 Windows 挂载盘分开。已有配置沿用其数据库位置。环境和私有 Google 配置在 `~/.local/share/print3d-launcher/<项目摘要>/`。数据库按 [运维说明](docs/OPERATIONS.md) 使用 SQLite 在线备份。
+By default, the database is stored under `~/.local/share/print3d-data/<project-hash>/` on Linux or WSL, away from the Windows mounted drive. Existing configurations keep their current database path. The virtual environment and private Google configuration are under `~/.local/share/print3d-launcher/<project-hash>/`. See the [operations guide](docs/OPERATIONS.md) for online SQLite backups. That guide is currently in Chinese.
 
-排障：重复实例先关闭旧 BAT 或 ID 工具；Telegram 无法连接时检查 WSL 网络；表单不出单先确认第一阶段脚本和触发器已安装、Google 配置已应用。程序不会自动删除已有 Telegram Webhook，也不会自动修改代理或防火墙。
+Troubleshooting: close an old launcher or ID tool if another instance is running. If Telegram cannot be reached, check the WSL or Linux network. If an order does not arrive, check that the Stage 1 script and triggers are installed and that the Google configuration has been applied. The launcher does not remove an existing Telegram webhook or change your proxy or firewall settings.
 
-官方说明：[WSL 安装](https://learn.microsoft.com/en-us/windows/wsl/install)、[Cloudflare 临时隧道](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)。
+References: [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) · [Cloudflare Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
 
-## 项目结构
+## Project layout
 
-- `package.json`：npm 部署命令；`deploy_print3d.bat`：Windows 双击入口。
-- `auto_setup.py`、`app/`、`scripts/`：配置向导、接单后端和部署工具。
-- `manage.py`：订单状态、备份及重试工具。
-- `docs/`、`deploy/`：运维参考和服务器服务配置。
-- `tests/`：自动化验证。
-- `dist/`：可分享的干净安装包，运行 `npm run build` 重新生成。
+- `package.json`: npm commands. `deploy_print3d.bat`: Windows launcher.
+- `auto_setup.py`, `app/`, `scripts/`: setup wizard, order backend, and deployment tools.
+- `manage.py`: order status, backup, and retry operations.
+- `docs/`, `deploy/`: operations reference and Linux service configuration.
+- `tests/`: automated tests.
+- `dist/`: clean shareable release archive, generated with `npm run build`.
 
-## 许可证
+## License
 
-本项目采用 [MIT License](LICENSE)。
+This project is licensed under the [MIT License](LICENSE).
