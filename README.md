@@ -4,9 +4,25 @@
 
 A Telegram order and customer support system for 3D printing. Use npm to prepare and run the deployment, or double-click the Windows launcher. Node.js manages deployment; the order processing backend runs on Python, which is installed automatically.
 
-## npm deployment
+## Beginner setup
 
-Requirements: Node.js 22+ and npm. Supported platforms are Windows 10/11 with WSL2 Ubuntu, and Ubuntu/Debian Linux. Clone this private repository with an account that has access:
+Follow these steps in order. Node.js manages deployment; the order backend and its dependencies are prepared automatically.
+
+| Step | What you need | Open directly |
+|---|---|---|
+| 1. Install Node.js | Install the current LTS release (version 22 or newer), then reopen your terminal | [Download Node.js](https://nodejs.org/en/download) |
+| 2. Prepare the runtime | On Windows, install WSL2 and Ubuntu 24.04. On Linux, use Ubuntu/Debian and an account with installation permissions | [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) · [Ubuntu 24.04](https://apps.microsoft.com/detail/9nz3klhxdjp5) |
+| 3. Create a Telegram bot | Create a dedicated bot with BotFather and copy its token. For group-based orders, create a group and add the bot | [Open Telegram BotFather](https://t.me/BotFather) |
+| 4. Prepare the order form | Use a Google Form that already has the Stage 1 order-processing Apps Script and its submission/retry triggers installed and authorized. A Google account is required | [Google Forms](https://forms.google.com) · [Google Apps Script](https://script.google.com) |
+| 5. Get the project | Cloning the private repository requires a GitHub account with access. You can also download the release archive | [Open the GitHub repository](https://github.com/Zhuan-05/print3) · [Download ZIP](https://github.com/Zhuan-05/print3/archive/refs/heads/main.zip) |
+
+> **The Google Form is a prerequisite.** It must include Telegram ID, binding token, layer height, infill, material, and one STL upload field. The Stage 1 Apps Script and its triggers must already be installed and authorized. This repository does not include the complete Stage 1 `Code.gs`; a new blank form cannot receive orders by itself. Customers may need to sign in to Google to upload an STL.
+
+Prepare a short payment instruction for customers, such as “Contact the administrator for payment details.” You do not need a DeepSeek or OpenAI API key. Quick Tunnel starts automatically, so you do not need a Cloudflare account or domain for a trial. Its URL may change after a restart.
+
+### Install and start
+
+**Windows:** If cloning from GitHub, make sure your account has access to the private repository.
 
 ```bash
 git clone https://github.com/Zhuan-05/print3.git
@@ -15,25 +31,27 @@ npm install
 npm start
 ```
 
-`npm install` prepares the npm project. `npm start` checks and installs system and Python dependencies, then opens the setup wizard and starts the service. Windows may request administrator permission to install WSL. On Linux, the first setup may ask for your sudo password. Run Linux deployments as a regular user. Hosting platforms that cannot install Python or provide persistent SQLite storage are not supported.
+Alternatively, download the ZIP above, extract it, open a terminal in the `print3-main` folder, then run `npm install` and `npm start`. If Windows asks to install WSL, allow the administrator prompt. Open Ubuntu once to create a Linux username and password, then run the commands. You can also double-click `deploy_print3d.bat`.
+
+**Ubuntu/Debian:** Open a terminal in the project folder and run:
+
+```bash
+npm install
+npm start
+```
+
+Enter your Linux password if asked to install system components; password characters are not shown. Run Linux deployments as a regular user, not root. Keep the computer connected to the internet and prevent it from sleeping.
+
+Follow the terminal prompts to enter the bot token, pair your Telegram account, provide the form link, and add payment instructions. For the initial Google setup, paste the generated script into the existing Apps Script project and run `configurePrint3D`.
 
 | Command | Purpose |
 |---|---|
-| `npm start` | Prepare the environment, configure on first run, and start the service. Reuses existing configuration on later runs. |
-| `npm run setup` | Install the environment and dependencies without starting the bot. |
-| `npm run configure` | Reconfigure the service without starting it. |
-| `npm run build` | Create `dist/print3d-autodeploy.zip`. |
+| `npm start` | Install dependencies, configure on first run, and start. Later runs reuse the existing configuration. |
+| `npm run setup` | Prepare the runtime without starting the bot. |
+| `npm run configure` | Reconfigure the service. |
+| `npm run build` | Create the shareable `dist/print3d-autodeploy.zip` archive. |
 | `npm test` | Check the npm deployment entry point. |
-| `npm run test:backend` | Install test dependencies and run backend tests. No real Telegram messages are sent. |
-
-You can also extract the complete release archive into a permanent folder and double-click `deploy_print3d.bat`. Do not copy the BAT file by itself. The npm package is marked private and is not published to the public npm registry.
-
-## What you need
-
-1. Windows 10/11 or Ubuntu/Debian, installation permissions, and a reliable internet connection to Telegram, Google, Python package sources, and Cloudflare. Keep the computer awake while the service runs.
-2. A dedicated bot created with Telegram `@BotFather`, its bot token, and your Telegram account. For group-based order management, create a group and add the bot first.
-3. An existing Google Form with the Stage 1 order-processing Apps Script and installed, authorized submission and retry triggers. The form must include Telegram ID, binding token, layer height, infill, material, and one STL file upload field. This repository contains the Stage 2 backend and does not include the complete Stage 1 `Code.gs`; an empty form alone will not process orders.
-4. Payment instructions for your customers. You can start with “Contact the administrator for payment details.” You do not need a DeepSeek or OpenAI API key.
+| `npm run test:backend` | Install test dependencies and run backend tests without sending real messages. |
 
 ## First run
 

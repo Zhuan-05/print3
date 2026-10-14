@@ -4,9 +4,25 @@
 
 Telegram 3D 打印接单系统，支持 npm 部署或 Windows 双击启动。Node.js 负责安装和启动，接单后端使用 Python；程序会自动准备 Python 虚拟环境和依赖。
 
-## npm 部署
+## 小白快速部署
 
-需要 Node.js 22+ 和 npm。支持 Windows 10/11（使用 WSL2 Ubuntu）或 Ubuntu/Debian Linux。先从私有仓库克隆（需要 GitHub 访问权限）：
+按顺序完成下面几步。Node.js 负责部署，业务后端和依赖会自动准备。
+
+| 步骤 | 需要准备 | 直接打开 |
+|---|---|---|
+| 1. 安装 Node.js | 安装 LTS 版本（22 或更新），安装完成后重新打开终端 | [Node.js 下载](https://nodejs.org/zh-cn/download) |
+| 2. 准备运行环境 | Windows 用户安装 WSL2 和 Ubuntu 24.04；Linux 用户需要 Ubuntu/Debian 和安装权限 | [Windows WSL 安装指南](https://learn.microsoft.com/zh-cn/windows/wsl/install) · [Ubuntu 24.04 下载](https://apps.microsoft.com/detail/9nz3klhxdjp5) |
+| 3. 创建 Telegram Bot | 在 BotFather 创建专用 Bot，复制 Token；群接单时先建群并把 Bot 拉进群 | [打开 Telegram BotFather](https://t.me/BotFather) |
+| 4. 准备接单表单 | 使用已经安装第一阶段接单 Apps Script 和提交/重试触发器的 Google Form；需要 Google 账号 | [Google Forms](https://forms.google.com) · [Google Apps Script](https://script.google.com) |
+| 5. 获取项目 | 私有仓库需要 GitHub 账号有访问权限；也可下载下方分享包 | [打开 GitHub 仓库](https://github.com/Zhuan-05/print3) · [下载 ZIP](https://github.com/Zhuan-05/print3/archive/refs/heads/main.zip) |
+
+> **Google 表单是必要前置条件：**表单需包含 Telegram ID、绑定令牌、层高、填充率、材质和一个 STL 上传字段，而且第一阶段 Apps Script 与触发器必须已经安装并授权。本仓库不包含完整的第一阶段 `Code.gs`；新建空白表单还不能接单。上传 STL 的客户可能需要登录 Google。
+
+准备一句给客户看的收款说明即可，例如“请联系管理员获取收款信息”。不需要 DeepSeek 或 OpenAI API Key。Quick Tunnel 由程序自动启动，不用注册 Cloudflare 账号或购买域名；它适合试用，重启后地址可能变化。
+
+### 安装和启动
+
+**Windows：**如果从 GitHub 克隆，请先确保账号能访问私有仓库。
 
 ```bash
 git clone https://github.com/Zhuan-05/print3.git
@@ -15,25 +31,27 @@ npm install
 npm start
 ```
 
-`npm install` 准备 npm 项目；`npm start` 自动检查/安装系统依赖、安装 Python 依赖，然后启动配置向导及服务。Windows 可能请求管理员安装 WSL，Linux 首次安装可能要求 sudo 密码。Linux 建议使用普通用户运行；不支持仅提供 Node.js、不能安装 Python 或持久保存 SQLite 的托管环境。
+也可以下载上表中的 ZIP，解压后进入 `print3-main` 目录，运行 `npm install` 和 `npm start`。首次安装 WSL 时按提示允许管理员安装，打开 Ubuntu 创建 Linux 用户名和密码后再运行命令。你也可以双击 `deploy_print3d.bat` 启动。
+
+**Ubuntu/Debian：**在项目目录打开终端，运行：
+
+```bash
+npm install
+npm start
+```
+
+安装系统组件时输入 Linux 密码（输入过程不显示字符）。Linux 建议用普通用户运行，不要用 root。电脑需保持联网并避免休眠。
+
+启动后跟随终端提示输入 Bot Token、完成 Telegram 配对、提供表单链接和收款说明。首次 Google 配置需要把自动生成的脚本粘贴到已有 Apps Script 项目，再运行 `configurePrint3D`。
 
 | 命令 | 用途 |
 |---|---|
-| `npm start` | 自动准备环境、首次配置并启动；已有配置直接复用 |
-| `npm run setup` | 只安装环境和依赖，不启动 Bot |
-| `npm run configure` | 重新配置，不启动服务 |
-| `npm run build` | 生成 `dist/print3d-autodeploy.zip` |
-| `npm test` | 验证 npm 启动入口 |
-| `npm run test:backend` | 安装测试依赖并验证接单后端，不发送真实消息 |
-
-也可以将整个分享包解压到固定目录，双击 `deploy_print3d.bat`。不要只复制 BAT。仓库设为私有 npm 项目，不发布到公共 npm registry。
-
-## 使用者需要准备什么
-
-1. Windows 10/11 或 Ubuntu/Debian、安装权限和稳定网络（能访问 Telegram、Google、Python 软件源和 Cloudflare）。电脑运行期间不能休眠。
-2. 自己向 Telegram `@BotFather` 创建的专用机器人 Token，以及自己的 Telegram 账号。群接单时先建管理群并加入机器人。
-3. **已完成第一阶段接单脚本的 Google 表单**：包含 Telegram ID、绑定令牌、层高、填充率、材质、单个 STL 上传字段；原来的表单提交及失败重试触发器已安装并授权。这个第二阶段包不含第一阶段完整 Code.gs，不能把空白表单当成已接通的表单。
-4. 收款说明。可以先填“请联系管理员获取收款信息”。不需要 DeepSeek 或 OpenAI API Key。
+| `npm start` | 自动安装依赖，首次配置并启动；以后直接复用已有配置 |
+| `npm run setup` | 只准备运行环境，不启动 Bot |
+| `npm run configure` | 重新配置 |
+| `npm run build` | 生成 `dist/print3d-autodeploy.zip` 分享包 |
+| `npm test` | 检查 npm 部署入口 |
+| `npm run test:backend` | 安装测试依赖并运行后端测试（不发送真实消息） |
 
 ## 首次使用
 
