@@ -1,5 +1,7 @@
 # Print3D
 
+**Language:** English | [简体中文](README.zh-CN.md)
+
 A Telegram order and customer support system for 3D printing. Use npm to prepare and run the deployment, or double-click the Windows launcher. Node.js manages deployment; the order processing backend runs on Python, which is installed automatically.
 
 ## npm deployment
