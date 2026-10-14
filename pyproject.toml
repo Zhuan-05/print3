@@ -1,0 +1,8 @@
+[project]
+name = "print3d-telegram-orders"
+version = "1.0.0"
+requires-python = ">=3.11"
+description = "Single-instance Telegram order and support backend with Google Forms integration"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
