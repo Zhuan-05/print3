@@ -1,10 +1,34 @@
-# 双击部署 Print3D
+# Print3D
 
-把整个分享包解压到固定目录，双击 `deploy_print3d.bat`。不要只复制 BAT。
+Telegram 3D 打印接单系统，支持 npm 部署或 Windows 双击启动。Node.js 负责安装和启动，接单后端使用 Python；程序会自动准备 Python 虚拟环境和依赖。
+
+## npm 部署
+
+需要 Node.js 22+ 和 npm。支持 Windows 10/11（使用 WSL2 Ubuntu）或 Ubuntu/Debian Linux。先从私有仓库克隆（需要 GitHub 访问权限）：
+
+```bash
+git clone https://github.com/Zhuan-05/print3.git
+cd print3
+npm install
+npm start
+```
+
+`npm install` 准备 npm 项目；`npm start` 自动检查/安装系统依赖、安装 Python 依赖，然后启动配置向导及服务。Windows 可能请求管理员安装 WSL，Linux 首次安装可能要求 sudo 密码。Linux 建议使用普通用户运行；不支持仅提供 Node.js、不能安装 Python 或持久保存 SQLite 的托管环境。
+
+| 命令 | 用途 |
+|---|---|
+| `npm start` | 自动准备环境、首次配置并启动；已有配置直接复用 |
+| `npm run setup` | 只安装环境和依赖，不启动 Bot |
+| `npm run configure` | 重新配置，不启动服务 |
+| `npm run build` | 生成 `dist/print3d-autodeploy.zip` |
+| `npm test` | 验证 npm 启动入口 |
+| `npm run test:backend` | 安装测试依赖并验证接单后端，不发送真实消息 |
+
+也可以将整个分享包解压到固定目录，双击 `deploy_print3d.bat`。不要只复制 BAT。仓库设为私有 npm 项目，不发布到公共 npm registry。
 
 ## 使用者需要准备什么
 
-1. Windows 10/11、管理员安装权限和稳定网络（能访问 Telegram、Google、Python 软件源和 Cloudflare）。电脑运行期间不能休眠。
+1. Windows 10/11 或 Ubuntu/Debian、安装权限和稳定网络（能访问 Telegram、Google、Python 软件源和 Cloudflare）。电脑运行期间不能休眠。
 2. 自己向 Telegram `@BotFather` 创建的专用机器人 Token，以及自己的 Telegram 账号。群接单时先建管理群并加入机器人。
 3. **已完成第一阶段接单脚本的 Google 表单**：包含 Telegram ID、绑定令牌、层高、填充率、材质、单个 STL 上传字段；原来的表单提交及失败重试触发器已安装并授权。这个第二阶段包不含第一阶段完整 Code.gs，不能把空白表单当成已接通的表单。
 4. 收款说明。可以先填“请联系管理员获取收款信息”。不需要 DeepSeek 或 OpenAI API Key。
@@ -22,9 +46,9 @@
 
 ## 再次使用
 
-双击同一个 `deploy_print3d.bat`，自动复用配置和数据库。保持窗口开启；Ctrl+C 停止服务。Quick Tunnel 地址可能每次变化，重新启动后要把新生成的配置脚本粘贴到 Google 并运行一次。
+运行 `npm start` 或双击同一个 `deploy_print3d.bat`，自动复用配置和数据库。保持窗口开启；Ctrl+C 停止服务。Quick Tunnel 地址可能每次变化，重新启动后要把新生成的配置脚本粘贴到 Google 并运行一次。
 
-需要修改账号或表单配置时，在 CMD 中运行 `deploy_print3d.bat reconfigure`。完整配置不会在日常启动时被覆盖；重新配置保留已有数据库路径和有效 Webhook Secret。修改 Bot 或管理员前请备份并确认业务归属。
+需要修改账号或表单配置时，运行 `npm run configure`；使用 BAT 时可运行 `deploy_print3d.bat reconfigure`。npm 配置完成后再运行 `npm start`。完整配置不会在日常启动时被覆盖；重新配置保留已有数据库路径和有效 Webhook Secret。修改 Bot 或管理员前请备份并确认业务归属。
 
 ## 长期接单部署
 
@@ -34,7 +58,7 @@
 
 分享 `dist/print3d-autodeploy.zip`，不要分享已经配置过的整个项目目录。包不含 `.env`、真实密钥、订单数据库、日志或私有 Google 配置。每个商家使用自己的机器人、表单和安装目录。
 
-数据库默认在 WSL 的 `~/.local/share/print3d-data/<项目摘要>/`，与 Windows 挂载盘分开。已有配置沿用其数据库位置。环境和私有 Google 配置在 `~/.local/share/print3d-launcher/<项目摘要>/`。数据库按 [运维说明](docs/OPERATIONS.md) 使用 SQLite 在线备份。
+数据库默认在 Linux/WSL 的 `~/.local/share/print3d-data/<项目摘要>/`，与 Windows 挂载盘分开。已有配置沿用其数据库位置。环境和私有 Google 配置在 `~/.local/share/print3d-launcher/<项目摘要>/`。数据库按 [运维说明](docs/OPERATIONS.md) 使用 SQLite 在线备份。
 
 排障：重复实例先关闭旧 BAT 或 ID 工具；Telegram 无法连接时检查 WSL 网络；表单不出单先确认第一阶段脚本和触发器已安装、Google 配置已应用。程序不会自动删除已有 Telegram Webhook，也不会自动修改代理或防火墙。
 
@@ -42,9 +66,9 @@
 
 ## 项目结构
 
-- `deploy_print3d.bat`：唯一 Windows 部署及启动入口。
+- `package.json`：npm 部署命令；`deploy_print3d.bat`：Windows 双击入口。
 - `auto_setup.py`、`app/`、`scripts/`：配置向导、接单后端和部署工具。
 - `manage.py`：订单状态、备份及重试工具。
 - `docs/`、`deploy/`：运维参考和服务器服务配置。
 - `tests/`：自动化验证。
-- `dist/`：可分享的干净安装包，运行 `python3 scripts/build_release.py` 重新生成。
+- `dist/`：可分享的干净安装包，运行 `npm run build` 重新生成。

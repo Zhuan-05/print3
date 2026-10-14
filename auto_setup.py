@@ -116,7 +116,7 @@ def ask_form():
 def main():
     os.chdir(ROOT)
     if ready() and '--reconfigure' not in sys.argv:
-        print('现有配置完整，直接启动。修改配置请运行 deploy_print3d.bat reconfigure。')
+        print('现有配置完整，直接启动。修改配置请运行 npm run configure。')
         return 0
     print('首次部署：请准备 BotFather Token、接单 Google 表单（含第一阶段 Apps Script）和收款说明。')
     if (ROOT / '.env').exists():

@@ -1,7 +1,7 @@
 param([string]$Mode = '')
 $ErrorActionPreference = 'Stop'
 $projectPath = Split-Path -Parent $PSScriptRoot
-if ($Mode -notin @('', 'reconfigure')) { throw 'Usage: deploy_print3d.bat [reconfigure]' }
+if ($Mode -notin @('', 'start', 'install', 'reconfigure', 'build', 'test')) { throw 'Invalid deployment mode.' }
 $wsl = Get-Command wsl.exe -ErrorAction SilentlyContinue
 $distros = @()
 if ($wsl) {

@@ -1,4 +1,4 @@
-"""WSL-only foreground supervisor. Never print config values or raw service logs."""
+"""Linux/WSL foreground supervisor. Never print config values or raw service logs."""
 import os
 import json
 from pathlib import Path
@@ -35,7 +35,7 @@ def main():
         from app.config import Settings
         settings = Settings.load()
     except Exception:
-        print('ERROR: Invalid or incomplete .env. Run deploy_print3d.bat reconfigure; no secrets were printed.')
+        print('ERROR: Invalid or incomplete .env. Run npm run configure; no secrets were printed.')
         return 1
     with socket.socket() as probe:
         try:

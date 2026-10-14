@@ -3,11 +3,11 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = ['README.md', 'docs/OPERATIONS.md',
+FILES = ['package.json', 'package-lock.json', 'scripts/npm.mjs', 'tests/npm.test.mjs', 'README.md', 'docs/OPERATIONS.md',
          '.env.example', '.gitignore', 'requirements.txt', 'requirements-test.txt',
          'pyproject.toml', 'manage.py', 'auto_setup.py', 'deploy_print3d.bat',
          'scripts/deploy.sh', 'scripts/deploy_windows.ps1',
-         'scripts/install_wsl_dependencies.sh', 'scripts/config_helpers.py',
+         'scripts/install_dependencies.sh', 'scripts/config_helpers.py',
          'scripts/run_local.py', 'scripts/build_release.py',
          'deploy/print3d.service', 'tests/test_system.py', 'tests/test_autodeploy.py']
 FILES += [str(p.relative_to(ROOT)) for p in sorted((ROOT / 'app').glob('*.py'))]
